@@ -24,7 +24,7 @@ module Athena::Config
     ENV[CONFIG_PATH_NAME] = path
   end
 
-  private def def self.load : ACF::Config
+  private def self.load : ACF::Config
     # TODO: Handle ENV vars and params
     ACF::Config.from_yaml {{read_file ENV[CONFIG_PATH_NAME]? || DEFAULT_CONFIG_PATH}}
   rescue ex : YAML::ParseException
