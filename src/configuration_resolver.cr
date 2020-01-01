@@ -9,7 +9,7 @@ module Athena::DI::Service; end
 # Component configurations that should be resolvable must reopen `self`
 # and add a `#resolve` method with a type restriction thats returns the desired configuration.
 struct Athena::Config::ConfigurationResolver
-  include ADI::Service
+  include Athena::DI::Service
 
   def resolve : ACF::Base
     base
