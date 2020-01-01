@@ -1,6 +1,7 @@
 require "yaml"
 
 require "./base"
+require "./configuration_resolver"
 
 # Convenience alias to make referencing `Athena::Config` types easier.
 alias ACF = Athena::Config
