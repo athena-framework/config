@@ -31,4 +31,12 @@ module Athena::Config
   rescue ex : YAML::ParseException
     raise "Error parsing Athena configuration file(#{ACF.config_path}): '#{ex.message}'"
   end
+
+  # Helper mixin that includes the modules and defines the methods required a configuration.
+  module Configuration
+    include YAML::Serializable
+    include YAML::Serializable::Strict
+
+    def initialize; end
+  end
 end
