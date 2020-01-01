@@ -34,9 +34,11 @@ module Athena::Config
 
   # Helper mixin that includes the modules and defines the methods required a configuration.
   module Configuration
-    include YAML::Serializable
-    include YAML::Serializable::Strict
+    macro included
+      include YAML::Serializable
+      include YAML::Serializable::Strict
 
-    def initialize; end
+      def initialize; end
+    end
   end
 end
