@@ -35,7 +35,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Specs
-        run: crystal spec --order random --warnings all --error-on-warnings
+        # Run the one spec separately in order to use a ENV var
+        run: |
+          crystal spec --order random --error-on-warnings
+          ATHENA_CONFIG_PATH=spec/athena.yml crystal spec spec/compiler/custom_config_path.cr --error-on-warnings
   test_nightly:
     runs-on: ubuntu-latest
     container:
@@ -43,4 +46,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Specs
-        run: crystal spec --order random --warnings all --error-on-warnings
+        # Run the one spec separately in order to use a ENV var
+        run: |
+          crystal spec --order random --error-on-warnings
+          ATHENA_CONFIG_PATH=spec/athena.yml crystal spec spec/compiler/custom_config_path.cr --error-on-warnings

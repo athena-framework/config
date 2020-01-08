@@ -12,13 +12,17 @@ module Athena::Config::ConfigurationResolverInterface
   abstract def resolve : ACF::Base
 
   # Resolves the configuration object for the given *_type*.
-  abstract def resolve(_type : _) : _
+  abstract def resolve(_type : _)
 end
 
 @[Athena::DI::Register]
 struct Athena::Config::ConfigurationResolver
   include Athena::DI::Service
   include Athena::Config::ConfigurationResolverInterface
+
+  def resolve(_type : _)
+    raise NotImplementedError.new "Unable to resolve configuration for type '#{_type}'"
+  end
 
   # :inherit:
   def resolve : ACF::Base
