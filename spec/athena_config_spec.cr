@@ -2,6 +2,10 @@ require "./spec_helper"
 
 describe Athena::Config do
   describe ".config_path" do
+    before_each do
+      ENV.delete ACF::CONFIG_PATH_NAME
+    end
+
     it "should use the default path if an ENV var is not defined" do
       ENV[ACF::CONFIG_PATH_NAME]?.should be_nil
       ACF.config_path.should eq ACF::DEFAULT_CONFIG_PATH
