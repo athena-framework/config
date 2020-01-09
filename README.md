@@ -1,30 +1,25 @@
 # Config
 
-TODO: Write a description here
+[![Build Status](https://img.shields.io/github/workflow/status/athena-framework/config/CI)](https://github.com/athena-framework/config/actions)
+[![Latest release](https://img.shields.io/github/release/athena-framework/config.svg?style=flat-square)](https://github.com/athena-framework/config/releases)
+
+Common library for configuring Athena components.
 
 ## Installation
 
 1. Add the dependency to your `shard.yml`:
 
-   ```yaml
-   dependencies:
-     config:
-       github: athena-framework/config
-   ```
+```yaml
+dependencies:
+  athena-config:
+    github: athena-framework/config
+```
 
 2. Run `shards install`
 
-## Usage
+## Documentation
 
-```crystal
-require "athena_config"
-```
-
-TODO: Write usage instructions here
-
-## Development
-
-TODO: Write development instructions here
+Everything is documented in the [API Docs](https://athena-framework.github.io/config/Athena/Config.html).
 
 ## Contributing
 
