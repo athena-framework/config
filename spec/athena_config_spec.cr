@@ -2,10 +2,14 @@ require "./spec_helper"
 
 describe Athena::Config do
   describe ".config_path" do
-    it "allows fetching and setting the config path" do
+    it "should use the default path if an ENV var is not defined" do
       ENV[ACF::CONFIG_PATH_NAME]?.should be_nil
-      ACF.config_path = "FOO"
-      ENV[ACF::CONFIG_PATH_NAME]?.should eq "FOO"
+      ACF.config_path.should eq ACF::DEFAULT_CONFIG_PATH
+    end
+
+    it "should use ENV var path if defined" do
+      ENV[ACF::CONFIG_PATH_NAME] = "FOO"
+      ACF.config_path.should eq "FOO"
     end
   end
 

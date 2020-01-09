@@ -7,8 +7,6 @@ alias ACF = Athena::Config
 #
 # Currently the two primary types are `ACF::Base`, and `ACF::ConfigurationResolver`. `ACF::Base` represents the structure of Athena's YAML configuration file.
 # `ACF::ConfigurationResolver` allows resolving the configuration for a given component within a service.  See each specific type for more detailed information.
-#
-# TODO: Handle resolving ENV vars and DI parameters within the configuration file.
 module Athena::Config
   VERSION = "0.1.0"
 
@@ -18,14 +16,20 @@ module Athena::Config
   # The default path to the configuration file.
   DEFAULT_CONFIG_PATH = "./athena.yml"
 
+  # Returns the `ACF::Base` object instantiated from the configuration file located at `.config_path`.
+  #
+  # The contents of the configuration file are included into the binary at compile time so that the file itself
+  # does not need to be present for the binary to run.  The configuration string is not processed until `.config` is called for the first time
+  # so that in the future it will respect ENV vars for the environment the binary is in.
+  #
+  # TODO: Handle resolving ENV vars and DI parameters within the configuration file.
   class_getter config : ACF::Base { ACF.load }
 
+  # Returns the current path that the configuration file is located at.
+  #
+  # Falls back on `DEFAULT_CONFIG_PATH` if a `ATHENA_CONFIG_PATH` ENV variable is not defined.
   def self.config_path : String
     ENV[CONFIG_PATH_NAME]? || DEFAULT_CONFIG_PATH
-  end
-
-  def self.config_path=(path : String) : Nil
-    ENV[CONFIG_PATH_NAME] = path
   end
 
   protected def self.load : ACF::Base
