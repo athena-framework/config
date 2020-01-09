@@ -1,11 +1,14 @@
 require "yaml"
 
-require "./base"
-require "./configuration_resolver"
-
 # Convenience alias to make referencing `Athena::Config` types easier.
 alias ACF = Athena::Config
 
+# Athena's Config component contains common types for configuring a component.
+#
+# Currently the two primary types are `ACF::Base`, and `ACF::ConfigurationResolver`. `ACF::Base` represents the structure of Athena's YAML configuration file.
+# `ACF::ConfigurationResolver` allows resolving the configuration for a given component within a service.  See each specific type for more detailed information.
+#
+# TODO: Handle resolving ENV vars and DI parameters within the configuration file.
 module Athena::Config
   VERSION = "0.1.0"
 
@@ -33,6 +36,10 @@ module Athena::Config
   end
 
   # Helper mixin that includes the modules and defines the methods required a configuration.
+  #
+  # Includes `YAML::Serializable` for handling deserializing the configuration file into a `ACF::Base` and `YAML::Serializable::Strict` to prevent unused/undefined configurations within the file.
+  #
+  # See `ACF::Base` for more information on defining custom configuration types.
   module Configuration
     macro included
       include YAML::Serializable
@@ -42,3 +49,6 @@ module Athena::Config
     end
   end
 end
+
+require "./base"
+require "./configuration_resolver"
