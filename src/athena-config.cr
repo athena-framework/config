@@ -46,7 +46,8 @@ module Athena
 
     protected def self.load : ACF::Base
       # TODO: Handle ENV vars and params
-      ACF::Base.from_yaml {{read_file(env(CONFIG_PATH_NAME) || DEFAULT_CONFIG_PATH)}}
+      # If no file exists, create an empty config using default values
+      ACF::Base.from_yaml {{read_file?(env(CONFIG_PATH_NAME) || DEFAULT_CONFIG_PATH) || ""}}
     rescue ex : YAML::ParseException
       raise "Error parsing Athena configuration file(#{ACF.config_path}): '#{ex.message}'"
     end

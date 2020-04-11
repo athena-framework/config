@@ -1,7 +1,7 @@
 # Config
 
-[![Build Status](https://img.shields.io/github/workflow/status/athena-framework/config/CI)](https://github.com/athena-framework/config/actions)
-[![Latest release](https://img.shields.io/github/release/athena-framework/config.svg?style=flat-square)](https://github.com/athena-framework/config/releases)
+[![CI](https://github.com/athena-framework/config/workflows/CI/badge.svg)](https://github.com/athena-framework/config/actions?query=workflow%3ACI)
+[![Latest release](https://img.shields.io/github/release/athena-framework/config.svg)](https://github.com/athena-framework/config/releases)
 
 Common library for configuring Athena components.
 
@@ -31,4 +31,4 @@ Everything is documented in the [API Docs](https://athena-framework.github.io/co
 
 ## Contributors
 
-- [Blacksmoke16](https://github.com/blacksmoke16) - creator and maintainer
+- [George Dietrich](https://github.com/blacksmoke16) - creator and maintainer

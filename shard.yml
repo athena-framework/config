@@ -1,6 +1,6 @@
 name: athena-config
 
-version: 0.1.0
+version: 0.1.1
 
 crystal: 0.32.0
 
@@ -14,9 +14,9 @@ description: |
   Common library for configuring Athena components.
 
 authors:
-  - Blacksmoke16 <Blacksmoke16@eve.tools>
+  - George Dietrich <george@dietrich.app>
 
 development_dependencies:
   ameba:
     github: crystal-ameba/ameba
-    version: ~> 0.11.0
+    version: ~> 0.12.0
