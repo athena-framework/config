@@ -1,5 +1,9 @@
 require "yaml"
 
+require "./annotations"
+require "./base"
+require "./configuration_resolver"
+
 # Convenience alias to make referencing `Athena::Config` types easier.
 alias ACF = Athena::Config
 
@@ -20,7 +24,31 @@ module Athena
   # Currently the two primary types are `ACF::Base`, and `ACF::ConfigurationResolver`. `ACF::Base` represents the structure of Athena's YAML configuration file.
   # `ACF::ConfigurationResolver` allows resolving the configuration for a given component within a service.  See each specific type for more detailed information.
   module Config
-    VERSION = "0.1.0"
+    # :nodoc:
+    CUSTOM_ANNOTATIONS = [] of Nil
+
+    macro add_configuration_annotation(annotation_class)
+      {% CUSTOM_ANNOTATIONS << annotation_class %}
+    end
+
+    protected macro configuration_annotation_hash(def_ivar_type)
+      {% custom_configurations = {} of Nil => Nil %}
+
+      {% for ann_class in ACF::CUSTOM_ANNOTATIONS %}
+        {% ann_class = ann_class.resolve %}
+
+        {% if ann = def_ivar_type.annotation ann_class %}
+          {% pos_args = ann.args.empty? ? "Tuple.new".id : ann.args %}
+          {% named_args = ann.named_args.empty? ? "NamedTuple.new".id : ann.named_args %}
+
+          {% custom_configurations[ann_class] = [] of Nil unless custom_configurations.has_key? ann_class %}
+
+          {% custom_configurations[ann_class] = "ACF::Annotations::Annotation.new(#{pos_args}, #{named_args})".id %}
+        {% end %}
+      {% end %}
+
+      {{custom_configurations}} {% if custom_configurations.empty? %}of Nil => Array(ACF::Annotations::AnnotationContainer) {% end %}
+    end
 
     # The name of the environment variable that stores the path to the configuration file.
     CONFIG_PATH_NAME = "ATHENA_CONFIG_PATH"
@@ -51,22 +79,5 @@ module Athena
     rescue ex : YAML::ParseException
       raise "Error parsing Athena configuration file(#{ACF.config_path}): '#{ex.message}'"
     end
-
-    # Helper mixin that includes the modules and defines the methods required a configuration.
-    #
-    # Includes `YAML::Serializable` for handling deserializing the configuration file into a `ACF::Base` and `YAML::Serializable::Strict` to prevent unused/undefined configurations within the file.
-    #
-    # See `ACF::Base` for more information on defining custom configuration types.
-    module Configuration
-      macro included
-      include YAML::Serializable
-      include YAML::Serializable::Strict
-
-      def initialize; end
-    end
-    end
   end
 end
-
-require "./base"
-require "./configuration_resolver"
