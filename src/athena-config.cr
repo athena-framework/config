@@ -31,25 +31,6 @@ module Athena
       {% CUSTOM_ANNOTATIONS << annotation_class %}
     end
 
-    protected macro configuration_annotation_hash(def_ivar_type)
-      {% custom_configurations = {} of Nil => Nil %}
-
-      {% for ann_class in ACF::CUSTOM_ANNOTATIONS %}
-        {% ann_class = ann_class.resolve %}
-
-        {% if ann = def_ivar_type.annotation ann_class %}
-          {% pos_args = ann.args.empty? ? "Tuple.new".id : ann.args %}
-          {% named_args = ann.named_args.empty? ? "NamedTuple.new".id : ann.named_args %}
-
-          {% custom_configurations[ann_class] = [] of Nil unless custom_configurations.has_key? ann_class %}
-
-          {% custom_configurations[ann_class] = "ACF::Annotations::Annotation.new(#{pos_args}, #{named_args})".id %}
-        {% end %}
-      {% end %}
-
-      {{custom_configurations}} {% if custom_configurations.empty? %}of Nil => Array(ACF::Annotations::AnnotationContainer) {% end %}
-    end
-
     # The name of the environment variable that stores the path to the configuration file.
     CONFIG_PATH_NAME = "ATHENA_CONFIG_PATH"
 

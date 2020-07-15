@@ -26,8 +26,8 @@ macro new_annotation_array(*pairs)
     {% pos_args = tup[0] == nil ? "Tuple.new".id : tup[0] %}
     {% named_args = tup[1] == nil ? "NamedTuple.new".id : tup[1] %}
 
-    {% annotations << "ACF::Annotations::Annotation.new(#{pos_args}, #{named_args})".id %}
+    {% annotations << "ACF::Annotations::Configuration.new(#{pos_args}, #{named_args})".id %}
   {% end %}
 
-  {{annotations}} of ACF::Annotations::AnnotationContainer
+  {{annotations}} of ACF::Annotations::ConfigurationBase
 end
