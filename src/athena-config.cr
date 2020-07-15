@@ -21,14 +21,36 @@ module Athena
 
   # Athena's Config component contains common types for configuring a component.
   #
-  # Currently the two primary types are `ACF::Base`, and `ACF::ConfigurationResolver`. `ACF::Base` represents the structure of Athena's YAML configuration file.
-  # `ACF::ConfigurationResolver` allows resolving the configuration for a given component within a service.  See each specific type for more detailed information.
+  # The main types include:
+  #
+  # * `ACF::Base` represents the structure of Athena's YAML configuration file.
+  # * `ACF::ConfigurationResolver` allows resolving the configuration for a given component within a service.
+  # * `ACF::Annotations` stores custom configuration annotations registered via `ACF.register_configuration_annotation`.
+  # Annotations must be read/supplied to `.new` by owning shard.
+  #
+  # See each specific type for more detailed information.
   module Config
     # :nodoc:
     CUSTOM_ANNOTATIONS = [] of Nil
 
-    macro add_configuration_annotation(annotation_class)
-      {% CUSTOM_ANNOTATIONS << annotation_class %}
+    # Registers a user defined annotation type that should be used to resolve custom annotation based configurations.
+    #
+    # NOTE: The logic to actually do the resolution must be handled in the owning shard.
+    # `Athena::Config` only defines the common logic that each implementation can use.
+    #
+    # OPTIMIZE: Make this automated once [this issue](https://github.com/crystal-lang/crystal/issues/9322) is resolved.
+    #
+    # ### Example
+    #
+    # ```
+    # annotation Security; end
+    #
+    # # Implementations would now pickup the `Security` annotation
+    # # applied to supported types, methods, and instance variables.
+    # ACF.register_configuration_annotation Security
+    # ```
+    macro register_configuration_annotation(annotation_type)
+      {% CUSTOM_ANNOTATIONS << annotation_type %}
     end
 
     # The name of the environment variable that stores the path to the configuration file.
