@@ -19,15 +19,6 @@ struct Athena::Config::ConfigurationResolver
   end
 end
 
-macro new_annotation_array(*pairs)
-  {% annotations = [] of Nil %}
-
-  {% for tup in pairs %}
-    {% pos_args = tup[0] == nil ? "Tuple.new".id : tup[0] %}
-    {% named_args = tup[1] == nil ? "NamedTuple.new".id : tup[1] %}
-
-    {% annotations << "ACF::Annotations::Configuration.new(#{pos_args}, #{named_args})".id %}
-  {% end %}
-
-  {{annotations}} of ACF::Annotations::ConfigurationBase
+macro new_annotation_array(*configurations)
+  [{{configurations.splat}}] of ACF::AnnotationConfigurations::ConfigurationBase
 end

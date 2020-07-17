@@ -1,6 +1,6 @@
 require "yaml"
 
-require "./annotations"
+require "./annotation_configurations"
 require "./base"
 require "./configuration_resolver"
 
@@ -33,24 +33,30 @@ module Athena
     # :nodoc:
     CUSTOM_ANNOTATIONS = [] of Nil
 
-    # Registers a user defined annotation type that should be used to resolve custom annotation based configurations.
-    #
-    # NOTE: The logic to actually do the resolution must be handled in the owning shard.
-    # `Athena::Config` only defines the common logic that each implementation can use.
-    #
-    # OPTIMIZE: Make this automated once [this issue](https://github.com/crystal-lang/crystal/issues/9322) is resolved.
+    # Registers a configuration annotation with the provided *name*.
+    # Also defines a configuration record with the provided *args* that represents the possible arguments that the annotation accepts.
     #
     # ### Example
     #
     # ```
-    # annotation Security; end
+    # # Defines an annotation without any arguments.
+    # ACF.configuration_annotation Secure
     #
-    # # Implementations would now pickup the `Security` annotation
-    # # applied to supported types, methods, and instance variables.
-    # ACF.register_configuration_annotation Security
+    # # Defines annotation with a required and optional argument.
+    # # The default value will be used if that key isn't supplied in the annotation.
+    # ACF.configuration_annotation SomeAnn, id : Int32, debug : Bool = true
     # ```
-    macro register_configuration_annotation(annotation_type)
-      {% CUSTOM_ANNOTATIONS << annotation_type %}
+    #
+    # NOTE: The logic to actually do the resolution of the annotations must be handled in the owning shard.
+    # `Athena::Config` only defines the common logic that each implementation can use.
+    # See `ACF::AnnotationConfigurations` for more information.
+    macro configuration_annotation(name, *args)
+      annotation {{name.id}}; end
+
+      # :nodoc:
+      record {{name.id}}Configuration < ACF::AnnotationConfigurations::ConfigurationBase{% unless args.empty? %}, {{*args}}{% end %}
+
+      {% CUSTOM_ANNOTATIONS << name %}
     end
 
     # The name of the environment variable that stores the path to the configuration file.
@@ -84,3 +90,6 @@ module Athena
     end
   end
 end
+
+ACF.configuration_annotation One, id : Int32
+ACF.configuration_annotation Two, id : Int32
