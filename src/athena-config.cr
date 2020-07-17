@@ -34,7 +34,8 @@ module Athena
     CUSTOM_ANNOTATIONS = [] of Nil
 
     # Registers a configuration annotation with the provided *name*.
-    # Also defines a configuration record with the provided *args* that represents the possible arguments that the annotation accepts.
+    # Defines a configuration record with the provided *args*, if any, that represents the possible arguments that the annotation accepts.
+    # May also be used with a block to add custom methods to the configuration record.
     #
     # ### Example
     #
@@ -45,16 +46,25 @@ module Athena
     # # Defines annotation with a required and optional argument.
     # # The default value will be used if that key isn't supplied in the annotation.
     # ACF.configuration_annotation SomeAnn, id : Int32, debug : Bool = true
+    #
+    # # A block can be used to define custom methods on the configuration object.
+    # ACF.configuration_annotation CustomAnn, first_name : String, last_name : String do
+    #   def name : String
+    #     "#{@first_name} #{@last_name}"
+    #   end
+    # end
     # ```
     #
     # NOTE: The logic to actually do the resolution of the annotations must be handled in the owning shard.
     # `Athena::Config` only defines the common logic that each implementation can use.
     # See `ACF::AnnotationConfigurations` for more information.
-    macro configuration_annotation(name, *args)
+    macro configuration_annotation(name, *args, &)
       annotation {{name.id}}; end
 
       # :nodoc:
-      record {{name.id}}Configuration < ACF::AnnotationConfigurations::ConfigurationBase{% unless args.empty? %}, {{*args}}{% end %}
+      record {{name.id}}Configuration < ACF::AnnotationConfigurations::ConfigurationBase{% unless args.empty? %}, {{*args}}{% end %} do
+        {{yield}}
+      end
 
       {% CUSTOM_ANNOTATIONS << name %}
     end
@@ -90,6 +100,3 @@ module Athena
     end
   end
 end
-
-ACF.configuration_annotation One, id : Int32
-ACF.configuration_annotation Two, id : Int32
