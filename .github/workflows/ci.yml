@@ -40,7 +40,7 @@ jobs:
   test_nightly:
     runs-on: ubuntu-latest
     container:
-      image: crystallang/crystal:latest-alpine
+      image: crystallang/crystal:nightly-alpine
     steps:
       - uses: actions/checkout@v2
       - name: Specs

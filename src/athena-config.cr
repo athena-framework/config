@@ -25,7 +25,7 @@ module Athena
   #
   # * `ACF::Base` represents the structure of Athena's YAML configuration file.
   # * `ACF::ConfigurationResolver` allows resolving the configuration for a given component within a service.
-  # * `ACF::Annotations` stores custom configuration annotations registered via `Athena::Config.register_configuration_annotation`.
+  # * `ACF::AnnotationConfigurations` stores annotation configurations registered via `Athena::Config.configuration_annotation`.
   # Annotations must be read/supplied to `.new` by owning shard.
   #
   # See each specific type for more detailed information.
