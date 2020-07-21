@@ -1,7 +1,5 @@
 require "./spec_helper"
 
-# private record OneConfiguration < ACF::AnnotationConfigurations::ConfigurationBase, id : Int32
-
 ACF.configuration_annotation One, id : Int32
 ACF.configuration_annotation Two, id : Int32
 ACF.configuration_annotation Three, id : Int32 do
