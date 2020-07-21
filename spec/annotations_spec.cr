@@ -75,7 +75,7 @@ describe ACF::AnnotationConfigurations do
     end
   end
 
-  describe "#key?" do
+  describe "#has?" do
     it "returns true if that annotation is present" do
       ACF::AnnotationConfigurations.new({
         One => new_annotation_array(OneConfiguration.new(1), OneConfiguration.new(2)),

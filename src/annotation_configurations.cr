@@ -44,10 +44,8 @@ module Athena::Config
     annotation Placeholder; end
 
     macro finished
-      {% union_str = %(Union(#{ACF::CUSTOM_ANNOTATIONS.empty? ? "Placeholder.class".id : ACF::CUSTOM_ANNOTATIONS.map { |t| "#{t}.class".id }.splat})) %}
-
       # A union representing the possible annotation classes that could be applied to a type, method, or instance variable.
-      alias Classes = {{union_str.id}}
+      alias Classes = {{%(Union(#{ACF::CUSTOM_ANNOTATIONS.empty? ? "Placeholder.class".id : ACF::CUSTOM_ANNOTATIONS.map { |t| "#{t}.class".id }.splat})).id}}
 
       # The Hash type that will store the annotation configurations.
       alias AnnotationHash = Hash(ACF::AnnotationConfigurations::Classes, Array(ACF::AnnotationConfigurations::ConfigurationBase))
