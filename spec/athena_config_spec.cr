@@ -7,7 +7,7 @@ describe Athena do
     end
 
     it "should use the default env if an ENV var is not defined" do
-      ENV[Athena::ENV_NAME]?.should be_nil
+      ENV.has_key?(Athena::ENV_NAME).should be_false
       Athena.environment.should eq "development"
     end
 
@@ -24,7 +24,7 @@ describe Athena do
       end
 
       it "should use the default path if an ENV var is not defined" do
-        ENV[ACF::CONFIG_PATH_NAME]?.should be_nil
+        ENV.has_key?(ACF::CONFIG_PATH_NAME).should be_false
         ACF.config_path.should eq ACF::DEFAULT_CONFIG_PATH
       end
 

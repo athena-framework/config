@@ -18,3 +18,7 @@ struct Athena::Config::ConfigurationResolver
     base.test
   end
 end
+
+macro new_annotation_array(*configurations)
+  [{{configurations.splat}}] of ACF::AnnotationConfigurations::ConfigurationBase
+end

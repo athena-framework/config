@@ -1,5 +1,9 @@
 require "yaml"
 
+require "./annotation_configurations"
+require "./base"
+require "./configuration_resolver"
+
 # Convenience alias to make referencing `Athena::Config` types easier.
 alias ACF = Athena::Config
 
@@ -17,10 +21,53 @@ module Athena
 
   # Athena's Config component contains common types for configuring a component.
   #
-  # Currently the two primary types are `ACF::Base`, and `ACF::ConfigurationResolver`. `ACF::Base` represents the structure of Athena's YAML configuration file.
-  # `ACF::ConfigurationResolver` allows resolving the configuration for a given component within a service.  See each specific type for more detailed information.
+  # The main types include:
+  #
+  # * `ACF::Base` represents the structure of Athena's YAML configuration file.
+  # * `ACF::ConfigurationResolver` allows resolving the configuration for a given component within a service.
+  # * `ACF::AnnotationConfigurations` stores annotation configurations registered via `Athena::Config.configuration_annotation`.
+  # Annotations must be read/supplied to `.new` by owning shard.
+  #
+  # See each specific type for more detailed information.
   module Config
-    VERSION = "0.1.0"
+    # :nodoc:
+    CUSTOM_ANNOTATIONS = [] of Nil
+
+    # Registers a configuration annotation with the provided *name*.
+    # Defines a configuration record with the provided *args*, if any, that represents the possible arguments that the annotation accepts.
+    # May also be used with a block to add custom methods to the configuration record.
+    #
+    # ### Example
+    #
+    # ```
+    # # Defines an annotation without any arguments.
+    # ACF.configuration_annotation Secure
+    #
+    # # Defines annotation with a required and optional argument.
+    # # The default value will be used if that key isn't supplied in the annotation.
+    # ACF.configuration_annotation SomeAnn, id : Int32, debug : Bool = true
+    #
+    # # A block can be used to define custom methods on the configuration object.
+    # ACF.configuration_annotation CustomAnn, first_name : String, last_name : String do
+    #   def name : String
+    #     "#{@first_name} #{@last_name}"
+    #   end
+    # end
+    # ```
+    #
+    # NOTE: The logic to actually do the resolution of the annotations must be handled in the owning shard.
+    # `Athena::Config` only defines the common logic that each implementation can use.
+    # See `ACF::AnnotationConfigurations` for more information.
+    macro configuration_annotation(name, *args, &)
+      annotation {{name.id}}; end
+
+      # :nodoc:
+      record {{name.id}}Configuration < ACF::AnnotationConfigurations::ConfigurationBase{% unless args.empty? %}, {{*args}}{% end %} do
+        {{yield}}
+      end
+
+      {% CUSTOM_ANNOTATIONS << name %}
+    end
 
     # The name of the environment variable that stores the path to the configuration file.
     CONFIG_PATH_NAME = "ATHENA_CONFIG_PATH"
@@ -51,22 +98,5 @@ module Athena
     rescue ex : YAML::ParseException
       raise "Error parsing Athena configuration file(#{ACF.config_path}): '#{ex.message}'"
     end
-
-    # Helper mixin that includes the modules and defines the methods required a configuration.
-    #
-    # Includes `YAML::Serializable` for handling deserializing the configuration file into a `ACF::Base` and `YAML::Serializable::Strict` to prevent unused/undefined configurations within the file.
-    #
-    # See `ACF::Base` for more information on defining custom configuration types.
-    module Configuration
-      macro included
-      include YAML::Serializable
-      include YAML::Serializable::Strict
-
-      def initialize; end
-    end
-    end
   end
 end
-
-require "./base"
-require "./configuration_resolver"

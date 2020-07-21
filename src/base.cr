@@ -1,4 +1,4 @@
-require "./athena-config"
+require "./configuration"
 
 # Base config type that wraps the `Athena` configuration file.
 #
@@ -28,5 +28,5 @@ require "./athena-config"
 #   api_key: API_KEY
 # ```
 struct Athena::Config::Base
-  include ACF::Configuration
+  include Athena::Config::Configuration
 end
