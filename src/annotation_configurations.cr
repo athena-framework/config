@@ -1,6 +1,6 @@
 module Athena::Config
   # Wraps a hash of configuration annotations applied to a given type, method, or instance variable.
-  # Provides the logic to access each annotation's configuration in a type safe manor.
+  # Provides the logic to access each annotation's configuration in a type safe manner.
   #
   # Implementations using this type must define the logic to provide the annotation hash manually;
   # this would most likely just be something like:
