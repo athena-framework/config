@@ -18,27 +18,23 @@ describe Athena do
   end
 
   describe Athena::Config do
-    describe ".config_path" do
-      before_each do
-        ENV.delete ACF::CONFIG_PATH_NAME
+    describe ".config" do
+      it "should return an ACF::Base instance" do
+        ACF.config.foo.should be_nil
       end
 
-      it "should use the default path if an ENV var is not defined" do
-        ENV.has_key?(ACF::CONFIG_PATH_NAME).should be_false
-        ACF.config_path.should eq ACF::DEFAULT_CONFIG_PATH
-      end
-
-      it "should use ENV var path if defined" do
-        ENV[ACF::CONFIG_PATH_NAME] = "FOO"
-        ACF.config_path.should eq "FOO"
+      it "should be a singleton" do
+        ACF.config.should be ACF.config
       end
     end
 
-    describe ".config" do
-      describe "with the default path" do
-        it "should return an ACF::Base instance" do
-          ACF.config.foo.should be_nil
-        end
+    describe ".parameters" do
+      it "should return an ACF::Parmaeters instance" do
+        ACF.parameters.username.should eq "fred"
+      end
+
+      it "should be a singleton" do
+        ACF.parameters.should be ACF.parameters
       end
     end
   end

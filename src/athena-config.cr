@@ -1,11 +1,14 @@
-require "yaml"
-
-require "./annotation_configurations"
-require "./base"
-require "./configuration_resolver"
-
 # Convenience alias to make referencing `Athena::Config` types easier.
 alias ACF = Athena::Config
+
+# Convenience alias to make referencing `ACF::Annotations` types easier.
+alias ACFA = ACF::Annotations
+
+require "./annotation_configurations"
+require "./annotations"
+require "./base"
+require "./configuration_resolver"
+require "./parameters"
 
 # A web framework comprised of reusable, independent components.
 #
@@ -23,7 +26,8 @@ module Athena
   #
   # The main types include:
   #
-  # * `ACF::Base` represents the structure of Athena's YAML configuration file.
+  # * `ACF::Base` represents the configuration defining how various components/features should behave.
+  # * `ACF::Parameters` represent reuseable configuration values.
   # * `ACF::ConfigurationResolver` allows resolving the configuration for a given component within a service.
   # * `ACF::AnnotationConfigurations` stores annotation configurations registered via `Athena::Config.configuration_annotation`.
   # Annotations must be read/supplied to `.new` by owning shard.
@@ -69,34 +73,20 @@ module Athena
       {% CUSTOM_ANNOTATIONS << name %}
     end
 
-    # The name of the environment variable that stores the path to the configuration file.
-    CONFIG_PATH_NAME = "ATHENA_CONFIG_PATH"
+    # Returns the `ACF::Base` object created via `ACF.load_configuration`.
+    class_getter config : ACF::Base { ACF.load_configuration self.parameters }
 
-    # The default path to the configuration file.
-    DEFAULT_CONFIG_PATH = "./athena.yml"
+    # Returns the `ACF::Parameters` object created via `ACF.load_parameters`.
+    class_getter parameters : ACF::Parameters { ACF.load_parameters }
 
-    # Returns the `ACF::Base` object instantiated from the configuration file located at `.config_path`.
-    #
-    # The contents of the configuration file are included into the binary at compile time so that the file itself
-    # does not need to be present for the binary to run.  The configuration string is not processed until `.config` is called for the first time
-    # so that in the future it will respect ENV vars for the environment the binary is in.
-    #
-    # TODO: Handle resolving ENV vars and DI parameters within the configuration file.
-    class_getter config : ACF::Base { ACF.load }
-
-    # Returns the current path that the configuration file is located at.
-    #
-    # Falls back on `DEFAULT_CONFIG_PATH` if a `ATHENA_CONFIG_PATH` ENV variable is not defined.
-    def self.config_path : String
-      ENV[CONFIG_PATH_NAME]? || DEFAULT_CONFIG_PATH
+    # By default return an empty configuration type.
+    protected def self.load_configuration(parameters : ACF::Parameters) : ACF::Base
+      ACF::Base.new
     end
 
-    protected def self.load : ACF::Base
-      # TODO: Handle ENV vars and params
-      # If no file exists, create an empty config using default values
-      ACF::Base.from_yaml {{read_file?(env(CONFIG_PATH_NAME) || DEFAULT_CONFIG_PATH) || ""}}
-    rescue ex : YAML::ParseException
-      raise "Error parsing Athena configuration file(#{ACF.config_path}): '#{ex.message}'"
+    # By default return an empty parameters type.
+    protected def self.load_parameters : ACF::Parameters
+      ACF::Parameters.new
     end
   end
 end
