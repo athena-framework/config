@@ -1,4 +1,6 @@
-# A type that allows resolving a specific configuration object by type.  Can be reopened to be made into a service to allow resolving configurations within other services.
+# A type that allows resolving a specific configuration object by type.
+# The main usecase for this type is to abstract _how_ a configuration object is provided; making testing/future refactors easier.
+# See `ACFA::Resolvable` for details.
 module Athena::Config::ConfigurationResolverInterface
   # Returns the `ACF::Base` configuration object.
   abstract def resolve : ACF::Base
@@ -18,7 +20,7 @@ struct Athena::Config::ConfigurationResolver
       {% begin %}
         {% for type in Object.all_subclasses.select &.annotation(ACFA::Resolvable) %}
           {% ann = type.annotation ACFA::Resolvable %}
-          {% path = ann[0] || ann["path"] || type.raise "TODO" %}
+          {% path = ann[0] || ann["path"] || type.raise "Configuration type '#{type}' has an ACFA::Resolvable annotation but is missing the type's configuration path.  It was not provided as the first positional argument nor via the 'name' field." %}
 
           # :inherit:
           def resolve(_type : {{type}}.class)

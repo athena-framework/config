@@ -22,17 +22,9 @@ module Athena
     ENV[ENV_NAME]? || "development"
   end
 
-  # Athena's Config component contains common types for configuring a component.
+  # Athena's Config component contains common types for configuring components/features, and managing `ACF::Parameters`.
   #
-  # The main types include:
-  #
-  # * `ACF::Base` represents the configuration defining how various components/features should behave.
-  # * `ACF::Parameters` represent reuseable configuration values.
-  # * `ACF::ConfigurationResolver` allows resolving the configuration for a given component within a service.
-  # * `ACF::AnnotationConfigurations` stores annotation configurations registered via `Athena::Config.configuration_annotation`.
-  # Annotations must be read/supplied to `.new` by owning shard.
-  #
-  # See each specific type for more detailed information.
+  # See the [external documentation](https://athenaframework.org/components/config/) for more information.
   module Config
     # :nodoc:
     CUSTOM_ANNOTATIONS = [] of Nil
@@ -73,14 +65,22 @@ module Athena
       {% CUSTOM_ANNOTATIONS << name %}
     end
 
-    # Returns the `ACF::Base` object created via `ACF.load_configuration`.
-    class_getter config : ACF::Base { ACF.load_configuration self.parameters }
+    # Returns the configured `ACF::Base` instance.
+    # The instance is a lazily initialized singleton.
+    #
+    # `ACF.load_configuration` may be redefined to change _how_ the configuration object is provided; e.g. create it from a `YAML` or `JSON` configuration file.
+    # See the [external documentation](https://athenaframework.org/components/config/#configuration) for more information.
+    class_getter config : ACF::Base { ACF.load_configuration }
 
-    # Returns the `ACF::Parameters` object created via `ACF.load_parameters`.
+    # Returns the configured `ACF::Parameters` instance.
+    # The instance is a lazily initialized singleton.
+    #
+    # `ACF.load_parameters` may be redefined to change _how_ the parameters object is provided; e.g. create it from a `YAML` or `JSON` configuration file.
+    # See the [external documentation](https://athenaframework.org/components/config/#parameters) for more information.
     class_getter parameters : ACF::Parameters { ACF.load_parameters }
 
     # By default return an empty configuration type.
-    protected def self.load_configuration(parameters : ACF::Parameters) : ACF::Base
+    protected def self.load_configuration : ACF::Base
       ACF::Base.new
     end
 
