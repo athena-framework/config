@@ -1,5 +1,8 @@
 require "spec"
+require "athena-spec"
 require "../src/athena-config"
+
+include ASPEC::Methods
 
 @[ACFA::Resolvable("a")]
 class Athena::Config::A
