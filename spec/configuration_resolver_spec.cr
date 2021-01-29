@@ -12,15 +12,19 @@ describe Athena::Config::ConfigurationResolver do
   describe "#resolve(_type)" do
     describe "that exists" do
       it "should resolve the given configuration object" do
-        config = ACF::ConfigurationResolver.new.resolve ACF::Test
-        config.should be_a ACF::Test
+        config = ACF::ConfigurationResolver.new.resolve ACF::A
+        config.should be_a ACF::A
         config.bar.should eq 12
+      end
+
+      it "should resolve the given optional nilable configuration object" do
+        ACF::ConfigurationResolver.new.resolve(ACF::B).should be_a ACF::B
       end
     end
 
     describe "that does not exist" do
       it "should raise an exception" do
-        expect_raises(NotImplementedError, "Not Implemented: Unable to resolve configuration for type 'Athena::Config::Base'") do
+        expect_raises(NotImplementedError, "Not Implemented: Unable to resolve configuration for type 'Athena::Config::Base'.") do
           ACF::ConfigurationResolver.new.resolve ACF::Base
         end
       end
