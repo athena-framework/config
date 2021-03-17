@@ -7,7 +7,6 @@ alias ACFA = ACF::Annotations
 require "./annotation_configurations"
 require "./annotations"
 require "./base"
-require "./configuration_resolver"
 require "./parameters"
 
 # A web framework comprised of reusable, independent components.
